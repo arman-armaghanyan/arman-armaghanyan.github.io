@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOOL_NAME - Toolity</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Import Bricolage Grotesque font */
+        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Bricolage Grotesque', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .page-container {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: row;
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: var(--color-surface);
+            padding: 32px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-header a {
+            text-decoration: none;
+            color: var(--color-text);
+        }
+
+        .sidebar-header h1 {
+            font-size: 32px;
+            margin: 0;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar-header h1:hover {
+            color: var(--color-primary);
+        }
+
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .mobile-header {
+            display: none;
+            background-color: var(--color-surface);
+            padding: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-header a {
+            text-decoration: none;
+            color: var(--color-text);
+        }
+
+        .mobile-header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .sidebar-tools {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-tool {
+            padding: 12px;
+            text-decoration: none;
+            color: var(--color-text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-tool:hover {
+            background-color: var(--color-surface-hover);
+        }
+
+        .sidebar-tool.active {
+            background-color: var(--color-primary);
+            color: var(--color-background);
+        }
+
+        .sidebar-tool.active:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        .sidebar-tool i {
+            font-size: 20px;
+            width: 24px;
+            height: 24px;
+        }
+
+        .sidebar-tool h3 {
+            font-size: 16px;
+            font-weight: 400;
+            margin: 0;
+        }
+
+        .sidebar-tool[locked] {
+            opacity: 0.2;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .sidebar-tool[new]::before {
+            content: 'New';
+            background-color: var(--color-success);
+            color: var(--color-background);
+            padding: 2px 8px;
+            font-size: 12px;
+            margin-left: auto;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 300px;
+            padding: 32px;
+        }
+
+        .tool-section {
+            background-color: var(--color-surface);
+            padding: 32px;
+            margin-bottom: 16px;
+        }
+
+        .tool-section h2 {
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: var(--color-text);
+        }
+
+        .tool-section p {
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Tool specific styles */
+        .tool-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .tool-header i {
+            font-size: 32px;
+            color: var(--color-text);
+        }
+
+        .tool-header h1 {
+            font-size: 32px;
+            color: var(--color-text);
+            margin: 0;
+        }
+
+        .tool-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .tool-button {
+            background-color: var(--color-primary);
+            color: var(--color-background);
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .tool-button:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        .tool-button.secondary {
+            background-color: var(--color-text-secondary);
+        }
+
+        .tool-button.secondary:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        .tool-dropzone {
+            border: 2px dashed var(--color-border);
+            padding: 48px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+            background-color: var(--color-background);
+        }
+
+        .tool-dropzone:hover {
+            border-color: var(--color-primary);
+        }
+
+        .tool-dropzone i {
+            font-size: 48px;
+            color: var(--color-text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .tool-dropzone p {
+            color: var(--color-text-secondary);
+            margin: 0;
+        }
+
+        .tool-settings {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .tool-setting {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .tool-setting label {
+            color: var(--color-text);
+            min-width: 120px;
+        }
+
+        .tool-setting input[type="range"] {
+            flex: 1;
+            accent-color: var(--color-primary);
+        }
+
+        .tool-setting input[type="number"] {
+            width: 80px;
+            background-color: var(--color-background);
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+            padding: 8px;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 250px;
+            }
+            
+            .main-content {
+                margin-left: 250px;
+                padding: 24px;
+            }
+            
+            .tool-section {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 80%;
+                max-width: 300px;
+                transform: translateX(-100%);
+                position: fixed;
+                top: 0;
+                left: 0;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .sidebar-toggle {
+                display: block;
+            }
+            
+            .mobile-header {
+                display: flex;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            
+            .tool-section {
+                padding: 20px;
+            }
+            
+            .tool-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .tool-header h1 {
+                font-size: 28px;
+            }
+            
+            .tool-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .tool-button {
+                width: 100%;
+            }
+            
+            .tool-dropzone {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tool-section {
+                padding: 16px;
+            }
+            
+            .tool-dropzone {
+                padding: 16px;
+            }
+            
+            .tool-dropzone i {
+                font-size: 32px;
+            }
+            
+            .tool-header h1 {
+                font-size: 24px;
+            }
+        }
+
+        .similar-tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .similar-tool {
+            background-color: var(--color-surface);
+            padding: 24px;
+            text-decoration: none;
+            color: var(--color-text);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .similar-tool:hover {
+            background-color: var(--color-surface-hover);
+            transform: translateY(-5px);
+        }
+
+        .similar-tool[locked] {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .similar-tool[locked]:hover {
+            transform: none;
+        }
+
+        .similar-tool i {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .similar-tool h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .similar-tool p {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            margin: 0;
+        }
+
+        .similar-tool .new-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background-color: var(--color-success);
+            color: var(--color-background);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 992px) {
+            .similar-tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .similar-tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Overlay for when sidebar is open on mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar-overlay.open {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <!-- Mobile Header -->
+        <div class="mobile-header">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a href="../index.html">
+                <h1>Toolity</h1>
+            </a>
+        </div>
+        
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+        
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html">
+                    <h1>Toolity</h1>
+                </a>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="sidebar-tools">
+                <!-- Tool links will be generated dynamically -->
+            </div>
+        </div>
+
+        <main class="main-content">
+            <div class="tool-section">
+                <div class="tool-header">
+                    <h1>TOOL_NAME</h1>
+                </div>
+                
+                <div class="tool-container">
+                    <!-- Tool specific content goes here -->
+                    <div class="tool-dropzone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag and drop your file here or click to browse</p>
+                    </div>
+
+                    <div class="tool-settings">
+                        <div class="tool-setting">
+                            <label for="quality">Quality</label>
+                            <input type="range" id="quality" min="0" max="100" value="80">
+                            <input type="number" value="80" min="0" max="100">
+                        </div>
+                    </div>
+
+                    <div class="tool-actions">
+                        <button class="tool-button">Convert</button>
+                        <button class="tool-button secondary">Reset</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-section">
+                <h2>How to Use</h2>
+                <p>1. Upload your file using the dropzone above<br>
+                   2. Adjust settings if needed<br>
+                   3. Click the convert button<br>
+                   4. Download your converted file</p>
+            </div>
+
+            <div class="tool-section">
+                <h2>About TOOL_NAME</h2>
+                <p>TOOL_ABOUT_TEXT</p>
+            </div>
+
+            <div class="similar-tools-grid">
+                <!-- Similar tools will be generated dynamically -->
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/presets.js"></script>
+    <script>
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+        
+        // Close sidebar when clicking on a link (for mobile)
+        document.querySelectorAll('.sidebar-tool').forEach(link => {
+            link.addEventListener('click', () => {
+                const sidebar = document.querySelector('.sidebar');
+                const overlay = document.querySelector('.sidebar-overlay');
+                if (sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('open');
+                }
+            });
+        });
+        
+        // Generate the sidebar tools
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarTools = document.querySelector('.sidebar-tools');
+            
+            // Fetch the tool presets from the main JavaScript file
+            fetch('../js/presets.js')
+                .then(response => response.text())
+                .then(data => {
+                    // Evaluate the presets.js content to get TOOL_PRESETS
+                    eval(data);
+                    
+                    // Create sidebar tools
+                    TOOL_PRESETS.tools.forEach(tool => {
+                        const sidebarTool = document.createElement('a');
+                        sidebarTool.className = 'sidebar-tool';
+                        sidebarTool.href = tool.isLocked ? '#' : tool.url;
+                        
+                        if (tool.isLocked) {
+                            sidebarTool.setAttribute('locked', '');
+                        }
+                        
+                        if (tool.isNew) {
+                            sidebarTool.setAttribute('new', '');
+                        }
+                        
+                        // Highlight the current tool
+                        if (window.location.pathname.includes(tool.url)) {
+                            sidebarTool.classList.add('active');
+                        }
+                        
+                        sidebarTool.innerHTML = `
+                            <i class="fas ${tool.icon}"></i>
+                            <h3>${tool.name}</h3>
+                        `;
+                        
+                        sidebarTools.appendChild(sidebarTool);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading tool presets:', error);
+                });
+        });
+        
+        // Generate similar tools
+        const similarToolsGrid = document.querySelector('.similar-tools-grid');
+        const currentTool = TOOL_PRESETS.tools.find(t => t.name === document.title.split(' - ')[0]);
+        
+        if (currentTool) {
+            // Get tools from the same category
+            const similarTools = TOOL_PRESETS.tools
+                .filter(t => t.category === currentTool.category && t.name !== currentTool.name)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3);
+
+            similarTools.forEach(tool => {
+                const toolElement = document.createElement(tool.isLocked ? 'div' : 'a');
+                toolElement.className = 'similar-tool';
+                
+                if (!tool.isLocked) {
+                    toolElement.href = "../" + tool.url;
+                }
+                
+                if (tool.isLocked) {
+                    toolElement.setAttribute('locked', '');
+                }
+                
+                if (tool.isNew) {
+                    toolElement.setAttribute('new', '');
+                }
+
+                toolElement.innerHTML = `
+                    <i class="fas ${tool.icon}"></i>
+                    <h3>${tool.name}</h3>
+                    <p>${tool.description}</p>
+                    ${tool.isNew ? '<span class="new-badge">New</span>' : ''}
+                `;
+                
+                similarToolsGrid.appendChild(toolElement);
+            });
+        }
+    </script>
+</body>
+</html> 

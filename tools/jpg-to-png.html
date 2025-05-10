@@ -1,23 +1,936 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JPG to PNG - Toolity</title>
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Import Bricolage Grotesque font */
+        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Bricolage Grotesque', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .page-container {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: row;
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: var(--color-surface);
+            padding: 32px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-header a {
+            text-decoration: none;
+            color: var(--color-text);
+        }
+
+        .sidebar-header h1 {
+            font-size: 32px;
+            margin: 0;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar-header h1:hover {
+            color: var(--color-primary);
+        }
+
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .mobile-header {
+            display: none;
+            background-color: var(--color-surface);
+            padding: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-header a {
+            text-decoration: none;
+            color: var(--color-text);
+        }
+
+        .mobile-header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .sidebar-tools {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-tool {
+            padding: 12px;
+            text-decoration: none;
+            color: var(--color-text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-tool:hover {
+            background-color: var(--color-surface-hover);
+        }
+
+        .sidebar-tool.active {
+            background-color: var(--color-primary);
+            color: var(--color-background);
+        }
+
+        .sidebar-tool.active:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        .sidebar-tool i {
+            font-size: 20px;
+            width: 24px;
+            height: 24px;
+        }
+
+        .sidebar-tool h3 {
+            font-size: 16px;
+            font-weight: 400;
+            margin: 0;
+        }
+
+        .sidebar-tool[locked] {
+            opacity: 0.2;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .sidebar-tool[new]::before {
+            content: 'New';
+            background-color: var(--color-success);
+            color: var(--color-background);
+            padding: 2px 8px;
+            font-size: 12px;
+            margin-left: auto;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 300px;
+            padding: 32px;
+        }
+
+        .tool-section {
+            background-color: var(--color-surface);
+            padding: 32px;
+            margin-bottom: 16px;
+        }
+
+        .tool-section h2 {
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: var(--color-text);
+        }
+
+        .tool-section p {
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Tool specific styles */
+        .tool-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .tool-header i {
+            font-size: 32px;
+            color: var(--color-text);
+        }
+
+        .tool-header h1 {
+            font-size: 32px;
+            color: var(--color-text);
+            margin: 0;
+        }
+
+        .tool-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .tool-button {
+            background-color: var(--color-primary);
+            color: var(--color-background);
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .tool-button:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        .tool-button.secondary {
+            background-color: var(--color-text-secondary);
+        }
+
+        .tool-button.secondary:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        .tool-dropzone {
+            border: 2px dashed var(--color-border);
+            padding: 48px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+            background-color: var(--color-background);
+        }
+
+        .tool-dropzone:hover {
+            border-color: var(--color-primary);
+        }
+
+        .tool-dropzone i {
+            font-size: 48px;
+            color: var(--color-text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .tool-dropzone p {
+            color: var(--color-text-secondary);
+            margin: 0;
+        }
+
+        .tool-settings {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .tool-setting {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .tool-setting label {
+            color: var(--color-text);
+            min-width: 120px;
+        }
+
+        .tool-setting input[type="range"] {
+            flex: 1;
+            accent-color: var(--color-primary);
+        }
+
+        .tool-setting input[type="number"] {
+            width: 80px;
+            background-color: var(--color-background);
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+            padding: 8px;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 250px;
+            }
+            
+            .main-content {
+                margin-left: 250px;
+                padding: 24px;
+            }
+            
+            .tool-section {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 80%;
+                max-width: 300px;
+                transform: translateX(-100%);
+                position: fixed;
+                top: 0;
+                left: 0;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .sidebar-toggle {
+                display: block;
+            }
+            
+            .mobile-header {
+                display: flex;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            
+            .tool-section {
+                padding: 20px;
+            }
+            
+            .tool-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .tool-header h1 {
+                font-size: 28px;
+            }
+            
+            .tool-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .tool-button {
+                width: 100%;
+            }
+            
+            .tool-dropzone {
+                padding: 24px;
+            }
+            
+            .tool-setting {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .tool-setting label {
+                margin-bottom: 8px;
+                min-width: auto;
+            }
+            
+            .tool-setting input[type="range"] {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tool-section {
+                padding: 16px;
+            }
+            
+            .tool-dropzone {
+                padding: 16px;
+            }
+            
+            .tool-dropzone i {
+                font-size: 32px;
+            }
+            
+            .tool-header h1 {
+                font-size: 24px;
+            }
+        }
+
+        .similar-tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .similar-tool {
+            background-color: var(--color-surface);
+            padding: 24px;
+            text-decoration: none;
+            color: var(--color-text);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .similar-tool:hover {
+            background-color: var(--color-surface-hover);
+            transform: translateY(-5px);
+        }
+
+        .similar-tool[locked] {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .similar-tool[locked]:hover {
+            transform: none;
+        }
+
+        .similar-tool i {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .similar-tool h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .similar-tool p {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            margin: 0;
+        }
+
+        .similar-tool .new-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background-color: var(--color-success);
+            color: var(--color-background);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 992px) {
+            .similar-tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .similar-tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* JPG to PNG specific styles */
+        .converted-items {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .converted-items.active {
+            max-height: 1000px;
+        }
+
+        .converted-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background-color: var(--color-background);
+            padding: 16px;
+            border: 1px solid var(--color-border);
+            position: relative;
+        }
+
+        .converted-item img {
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+        }
+
+        .converted-item-info {
+            flex: 1;
+        }
+
+        .converted-item-info h3 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+        }
+
+        .converted-item-info p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--color-text-secondary);
+        }
+
+        .converted-item-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .converted-item-action {
+            background-color: var(--color-surface);
+            border: none;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .converted-item-action:hover {
+            background-color: var(--color-primary);
+            color: var(--color-background);
+        }
+
+        .tool-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .converted-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .converted-item img {
+                width: 100%;
+                height: auto;
+                max-height: 200px;
+                margin-bottom: 8px;
+            }
+            
+            .converted-item-actions {
+                margin-left: 0;
+                margin-top: 8px;
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+        
+        /* Overlay for when sidebar is open on mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar-overlay.open {
+                display: block;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="tool-page">
-            <a href="../index.html" class="back-button">
-                <i class="fas fa-arrow-left"></i> Back to Home
+    <div class="page-container">
+        <!-- Mobile Header -->
+        <div class="mobile-header">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a href="../index.html">
+                <h1>Toolity</h1>
             </a>
-            <h1>JPG to PNG</h1>
-            <div class="tool-content">
-                <p>This tool is coming soon.</p>
+        </div>
+        
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+        
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html">
+                    <h1>Toolity</h1>
+                </a>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="sidebar-tools">
+                <!-- Tool links will be generated dynamically -->
             </div>
         </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="tool-section">
+                <div class="tool-header">
+                    <i class="fas fa-file-image"></i>
+                    <h1>JPG to PNG</h1>
+                </div>
+
+                <div class="tool-container">
+
+                    <!-- Tool specific content goes here -->
+                    <div class="tool-dropzone" id="dropzone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag and drop your JPEG files here or click to browse</p>
+                        <p>Maximum 20 files, JPEG format only</p>
+                        <input type="file" id="file-input" multiple accept=".jpg,.jpeg" style="display: none;">
+                    </div>
+
+                    <div class="converted-items" id="converted-items">
+                        <!-- Converted items will be added here dynamically -->
+                    </div>
+
+                    <div class="tool-buttons" style="display: none;" id="tool-buttons">
+                        <button class="tool-button" id="download-all-btn">Download All</button>
+                        <button class="tool-button" id="upload-more-btn">Upload More</button>
+                        <button class="tool-button" id="clear-all-btn">Clear All</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-section">
+                <h2>How to Use</h2>
+                <p>1. Upload your JPEG files using the dropzone above (up to 20 files at once)<br>
+                    2. Adjust settings for individual images if needed<br>
+                    3. Download individual images or all converted images at once<br>
+                    4. Clear all files or upload more JPEG images as needed</p>
+            </div>
+
+            <div class="tool-section">
+                <h2>About JPG to PNG</h2>
+                <p>This tool allows you to quickly convert JPEG images to PNG format. While JPEG files are typically
+                    smaller in size, PNG files support transparency and offer lossless compression, making them ideal
+                    for graphics, illustrations, and images where preserving details is important. The conversion
+                    preserves the original image quality.</p>
+            </div>
+
+            <div>
+                <div class="similar-tools-grid">
+                    <!-- Similar tools will be generated dynamically -->
+                </div>
+            </div>
+        </main>
     </div>
+
+    <script src="../js/presets.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Generate sidebar tools
+            const sidebarTools = document.querySelector('.sidebar-tools');
+            const currentToolName = document.title.split(' - ')[0];
+
+            TOOL_PRESETS.tools.forEach(tool => {
+                const toolElement = document.createElement(tool.isLocked ? 'div' : 'a');
+                toolElement.className = 'sidebar-tool';
+
+                // Add active class if this is the current tool
+                if (tool.name === currentToolName) {
+                    toolElement.classList.add('active');
+                }
+
+                // Add locked attribute if tool is locked
+                if (tool.isLocked) {
+                    toolElement.setAttribute('locked', '');
+                } else {
+                    toolElement.href = "../" + tool.url;
+                }
+
+                // Add new attribute if tool is new
+                if (tool.isNew) {
+                    toolElement.setAttribute('new', '');
+                }
+
+                toolElement.innerHTML = `
+                    <i class="fas ${tool.icon}"></i>
+                    <h3>${tool.name}</h3>
+                `;
+                sidebarTools.appendChild(toolElement);
+            });
+
+            // Generate similar tools
+            const similarToolsGrid = document.querySelector('.similar-tools-grid');
+            const currentTool = TOOL_PRESETS.tools.find(t => t.name === currentToolName);
+
+            if (currentTool) {
+                // Get tools from the same category
+                const similarTools = TOOL_PRESETS.tools
+                    .filter(t => t.category === currentTool.category && t.name !== currentToolName)
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 3);
+
+                similarTools.forEach(tool => {
+                    const toolElement = document.createElement(tool.isLocked ? 'div' : 'a');
+                    toolElement.className = 'similar-tool';
+
+                    if (!tool.isLocked) {
+                        toolElement.href = "../" + tool.url;
+                    }
+
+                    if (tool.isLocked) {
+                        toolElement.setAttribute('locked', '');
+                    }
+
+                    if (tool.isNew) {
+                        toolElement.setAttribute('new', '');
+                    }
+
+                    toolElement.innerHTML = `
+                        <i class="fas ${tool.icon}"></i>
+                        <h3>${tool.name}</h3>
+                        <p>${tool.description}</p>
+                        ${tool.isNew ? '<span class="new-badge">New</span>' : ''}
+                    `;
+
+                    similarToolsGrid.appendChild(toolElement);
+                });
+            }
+
+            // JPG to PNG converter functionality
+            const dropzone = document.getElementById('dropzone');
+            const fileInput = document.getElementById('file-input');
+            const convertedItems = document.getElementById('converted-items');
+            const downloadAllBtn = document.getElementById('download-all-btn');
+            const uploadMoreBtn = document.getElementById('upload-more-btn');
+            const clearAllBtn = document.getElementById('clear-all-btn');
+            const toolButtons = document.getElementById('tool-buttons');
+
+            let convertedFiles = [];
+
+            // Handle file selection
+            function handleFiles(files) {
+                // Filter for JPEG files only
+                const jpegFiles = Array.from(files).filter(file =>
+                    file.type === 'image/jpeg' || file.type === 'image/jpg');
+
+                // Limit to 20 files
+                const filesToProcess = jpegFiles.slice(0, 20);
+
+                if (filesToProcess.length === 0) {
+                    alert('Please select valid JPEG files');
+                    return;
+                }
+
+                // Process each file
+                filesToProcess.forEach(file => {
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        const img = new Image();
+                        img.onload = function () {
+                            // Create canvas for conversion
+                            const canvas = document.createElement('canvas');
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0);
+
+                            // Convert to PNG
+                            const pngDataUrl = canvas.toDataURL('image/png');
+
+                            // Add to converted files
+                            const convertedFile = {
+                                originalName: file.name,
+                                pngName: file.name.replace(/\.(jpg|jpeg)$/i, '.png'),
+                                dataUrl: pngDataUrl,
+                                originalSize: file.size,
+                                convertedSize: Math.round(pngDataUrl.length * 0.75)
+                            };
+
+                            convertedFiles.push(convertedFile);
+
+                            // Add to UI
+                            addConvertedItem(convertedFile);
+                        };
+
+                        img.src = e.target.result;
+                    };
+
+                    reader.readAsDataURL(file);
+                });
+
+                // Hide dropzone, show converted items and buttons
+                dropzone.style.display = 'none';
+                convertedItems.classList.add('active');
+                toolButtons.style.display = 'flex';
+            }
+
+            // Add converted item to UI
+            function addConvertedItem(file) {
+                const index = convertedFiles.indexOf(file);
+                const item = document.createElement('div');
+                item.className = 'converted-item';
+                item.dataset.index = index;
+
+                item.innerHTML = `
+                    <img src="${file.dataUrl}" alt="${file.pngName}">
+                    <div class="converted-item-info">
+                        <h3>${file.pngName}</h3>
+                        <p>Original: ${formatFileSize(file.originalSize)} • Converted: ${formatFileSize(file.convertedSize)}</p>
+                    </div>
+                    <div class="converted-item-actions">
+                        <button class="converted-item-action download-btn" title="Download">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="converted-item-action remove-btn" title="Remove">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+
+                convertedItems.appendChild(item);
+
+                // Add event listeners
+                item.querySelector('.download-btn').addEventListener('click', () => downloadFile(index));
+                item.querySelector('.remove-btn').addEventListener('click', () => removeFile(index));
+            }
+
+            // Format file size
+            function formatFileSize(bytes) {
+                if (bytes < 1024) return bytes + ' B';
+                if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+                return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+            }
+
+            // Download a specific file
+            function downloadFile(index) {
+                const file = convertedFiles[index];
+                const link = document.createElement('a');
+                link.href = file.dataUrl;
+                link.download = file.pngName;
+                link.click();
+            }
+
+            // Remove a specific file
+            function removeFile(index) {
+                // Remove from array
+                convertedFiles.splice(index, index + 1);
+
+                // Remove from UI
+                const itemToRemove = document.querySelector(`.converted-item[data-index="${index}"]`);
+                if (itemToRemove) {
+                    itemToRemove.remove();
+                }
+
+                // Update indices for remaining items
+                document.querySelectorAll('.converted-item').forEach((item, newIndex) => {
+                    item.dataset.index = newIndex;
+                });
+
+                // If no items left, reset the UI
+                if (convertedFiles.length === 0) {
+                    convertedItems.classList.remove('active');
+                    dropzone.style.display = 'block';
+                    toolButtons.style.display = 'none';
+                }
+            }
+
+            // Download all files
+            downloadAllBtn.addEventListener('click', function () {
+                if (convertedFiles.length === 0) return;
+
+                // Use setTimeout to avoid browser blocking multiple downloads
+                convertedFiles.forEach((file, index) => {
+                    setTimeout(() => {
+                        downloadFile(index);
+                    }, index * 100);
+                });
+            });
+
+            // Upload more files
+            uploadMoreBtn.addEventListener('click', function () {
+                fileInput.click();
+            });
+
+            // Clear all files
+            clearAllBtn.addEventListener('click', function () {
+                convertedFiles = [];
+                convertedItems.innerHTML = '';
+                convertedItems.classList.remove('active');
+                dropzone.style.display = 'block';
+                toolButtons.style.display = 'none';
+            });
+
+            // Dropzone event listeners
+            dropzone.addEventListener('click', function () {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', function () {
+                handleFiles(this.files);
+            });
+
+            dropzone.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                dropzone.style.borderColor = 'var(--color-primary)';
+            });
+
+            dropzone.addEventListener('dragleave', function () {
+                dropzone.style.borderColor = 'var(--color-border)';
+            });
+
+            dropzone.addEventListener('drop', function (e) {
+                e.preventDefault();
+                dropzone.style.borderColor = 'var(--color-border)';
+                handleFiles(e.dataTransfer.files);
+            });
+        });
+
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+        
+        // Close sidebar when clicking on a link (for mobile)
+        document.querySelectorAll('.sidebar-tool').forEach(link => {
+            link.addEventListener('click', () => {
+                const sidebar = document.querySelector('.sidebar');
+                const overlay = document.querySelector('.sidebar-overlay');
+                if (sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('open');
+                }
+            });
+        });
+    </script>
 </body>
-</html> 
+
+</html>

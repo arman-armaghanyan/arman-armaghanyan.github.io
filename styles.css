@@ -1,3 +1,22 @@
+/* Import Bricolage Grotesque font */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&display=swap');
+
+:root {
+    /* Main colors */
+    --color-primary: #0000ff;
+    --color-primary-hover: #0000cc;
+    --color-text: #0000ff;
+    --color-text-secondary: #6666ff;
+    --color-background: #ffffff;
+    --color-surface: #f5f5ff;
+    --color-surface-hover: #e6e6ff;
+    --color-border: #ccccff;
+    --color-success: #00cc00;
+    --color-success-hover: #00aa00;
+    --color-error: #ff0000;
+    --color-error-hover: #cc0000;
+}
+
 /* Reset and base styles */
 * {
     margin: 0;
@@ -5,10 +24,15 @@
     box-sizing: border-box;
 }
 
+html, body {
+    overflow-x: hidden; /* Prevent horizontal scrolling on mobile */
+    width: 100%;
+}
+
 body {
-    background-color: #000;
-    color: #fff;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: 'Bricolage Grotesque', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     line-height: 1.5;
 }
 
@@ -26,26 +50,25 @@ body {
 
 /* Tile styles */
 .tile {
-    background-color: #1a1a1a;
-    border-radius: 12px;
+    background-color: var(--color-surface);
     padding: 24px;
     position: relative;
     min-height: 240px;
     transition: all 0.3s ease;
 }
 
-.tile:hover {
-    background-color: #2a2a2a;
+.tile:not([locked]):hover {
+    background-color: var(--color-surface-hover);
+    transform: translateY(-5px);
 }
 
 /* Website name tile */
 .website-name {
     display: flex;
-    border-radius: 12px;
     align-items: center;
     justify-content: center;
-    background-color: #fff;
-    color: #000;
+    background-color: var(--color-primary);
+    color: var(--color-background);
 }
 
 .website-name h1 {
@@ -58,7 +81,11 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    cursor: pointer;
+}
+
+.tool[locked] {
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
 .tool-icon {
@@ -66,31 +93,19 @@ body {
     top: 24px;
     left: 24px;
     font-size: 32px;
-    color: #fff;
-}
-
-.coming-soon-icon {
-    display: none;
-}
-
-.tool[locked] .coming-soon-icon {
-    display: block;
-    position: absolute;
-    top: 24px;
-    right: 24px;
-    font-size: 20px;
-    color: #666;
+    color: var(--color-text);
 }
 
 .tool h2 {
     font-size: 24px;
+    font-weight: 500;
     margin-bottom: 12px;
-    color: #fff;
+    color: var(--color-text);
 }
 
 .tool p {
     font-size: 16px;
-    color: #999;
+    color: var(--color-text-secondary);
     line-height: 1.4;
 }
 
@@ -102,7 +117,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 24px;
-    color: #fff;
+    color: var(--color-text);
     z-index: 2;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -115,9 +130,8 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(4px);
-    border-radius: 12px;
     opacity: 0;
     transition: opacity 0.3s ease;
     z-index: 1;
@@ -157,25 +171,49 @@ body {
     }
     
     .tool h2 {
-        font-size: 28px;
+        font-size: 22px;
     }
     
     .tool p {
-        font-size: 18px;
+        font-size: 16px;
+    }
+    
+    .website-name h1 {
+        font-size: 36px;
     }
 }
 
 @media (max-width: 480px) {
     .grid {
         grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .container {
+        margin: 12px;
+    }
+    
+    .tile {
+        min-height: 200px;
+        padding: 16px;
     }
     
     .tool h2 {
-        font-size: 24px;
+        font-size: 20px;
     }
     
     .tool p {
-        font-size: 16px;
+        font-size: 14px;
+    }
+    
+    .tool-icon {
+        font-size: 24px;
+        top: 16px;
+        left: 16px;
+    }
+    
+    .website-name h1 {
+        font-size: 32px;
     }
 }
 
@@ -188,15 +226,13 @@ body {
 
 .tile.tool:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .tile.tool[locked] {
     cursor: not-allowed;
-    opacity: 0.7;
+    opacity: 0.5;
 }
 
 .tile.tool[locked]:hover {
     transform: none;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 } 
