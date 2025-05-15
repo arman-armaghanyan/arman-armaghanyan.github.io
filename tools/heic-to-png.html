@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JPG to PNG - Toolity</title>
+    <title>HEIC to PNG - Toolity</title>
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js"></script>
     <style>
         /* Import Bricolage Grotesque font */
         @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&display=swap');
@@ -34,7 +35,7 @@
         <!-- Drop indicator for full-page drop -->
         <div class="drop-indicator">
             <i class="fas fa-cloud-upload-alt" style="font-size: 64px; margin-bottom: 16px;"></i>
-            <h2>Drop JPG files here to convert</h2>
+            <h2>Drop HEIC files here to convert</h2>
             <p>Maximum 100 files</p>
         </div>
         
@@ -71,7 +72,7 @@
             <div class="tool-section">
                 <div class="tool-header">
                     <i class="fas fa-file-image"></i>
-                    <h1>JPG to PNG</h1>
+                    <h1>HEIC to PNG</h1>
                 </div>
 
                 <!-- Header actions with buttons -->
@@ -94,9 +95,9 @@
                     <div id="initial-state">
                     <div class="tool-dropzone" id="dropzone">
                         <i class="fas fa-cloud-upload-alt"></i>
-                            <p>Drag and drop your JPG files here or click to browse</p>
-                            <p>Maximum 100 files, JPG/JPEG format only</p>
-                        <input type="file" id="file-input" multiple accept=".jpg,.jpeg" style="display: none;">
+                            <p>Drag and drop your HEIC files here or click to browse</p>
+                            <p>Maximum 100 files, HEIC format only</p>
+                        <input type="file" id="file-input" multiple accept=".heic,.HEIC" style="display: none;">
                     </div>
                     </div>
 
@@ -105,7 +106,7 @@
                         <div class="tool-actions-container">
                             <div class="empty-state">
                                 <i class="fas fa-spinner fa-spin"></i>
-                                <p>Converting your JPG files to PNG...</p>
+                                <p>Converting your HEIC files to PNG...</p>
                     </div>
                 </div>
                     </div>
@@ -128,7 +129,7 @@
 
             <div class="tool-section">
                 <h2>How to Use</h2>
-                <p>1. Upload your JPG files by dragging them anywhere on the page or clicking the upload area<br>
+                <p>1. Upload your HEIC files by dragging them anywhere on the page or clicking the upload area<br>
                    2. Select images by clicking on them<br>
                    3. Download selected images or all converted images with the download button</p>
             </div>
@@ -140,8 +141,9 @@
             </div>
         </main>
     </div>
-
+    
     <script src="../js/presets.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js"></script>
     <script src="../js/image-comparison.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -165,10 +167,10 @@
             let convertedFiles = [];
             let selectedFiles = new Set();
             const MAX_FILES = 100;
-
+            
             // Initialize the image comparison component
             ImageComparison.init({
-                qualityControlVisible: false  // No quality control needed for PNG conversion
+                qualityControlVisible: false // No quality control needed for PNG conversion
             });
 
             // Setup event listeners for the dropzone
@@ -207,23 +209,24 @@
 
             // Handle files
             function handleFiles(files) {
-                // Check if files are valid JPG/JPEG files
-                const jpgFiles = Array.from(files).filter(file => 
-                    file.type === 'image/jpeg' || file.type === 'image/jpg');
+                // Check if files are valid HEIC files
+                const heicFiles = Array.from(files).filter(file => 
+                    file.type === 'image/heic' || 
+                    file.name.toLowerCase().endsWith('.heic'));
                 
-                if (jpgFiles.length === 0) {
-                    showErrorMessage('Only JPG/JPEG files are supported. Please select valid files.');
+                if (heicFiles.length === 0) {
+                    showErrorMessage('Only HEIC files are supported. Please select valid files.');
                     return;
                 }
                 
                 // Check if we're exceeding the maximum number of files
-                if (convertedFiles.length + jpgFiles.length > MAX_FILES) {
+                if (convertedFiles.length + heicFiles.length > MAX_FILES) {
                     showErrorMessage(`You can only convert up to ${MAX_FILES} files at once.`);
                     return;
                 }
                 
                 // Process files
-                const filesToProcess = jpgFiles.length > MAX_FILES ? jpgFiles.slice(0, MAX_FILES) : jpgFiles;
+                const filesToProcess = heicFiles.length > MAX_FILES ? heicFiles.slice(0, MAX_FILES) : heicFiles;
                 
                 // Switch to processing state if this is the first batch
                 if (convertedFiles.length === 0) {
@@ -237,7 +240,7 @@
                     const fileId = Date.now() + '-' + Math.random().toString(36).substr(2, 9);
                     
                     // Create the PNG filename by replacing extension
-                    const pngName = file.name.replace(/\.(jpg|jpeg)$/i, '.png');
+                    const pngName = file.name.replace(/\.(heic|HEIC)$/i, '.png');
                     
                     // Create file object
                     return {
@@ -266,48 +269,81 @@
             
             // Process a single file
             function processFile(fileObj) {
-                const reader = new FileReader();
-
-                reader.onload = function(e) {
-                    // File has been read
-                    updateProgress(fileObj.id, 50);
+                updateProgress(fileObj.id, 10);
+                
+                // Use heic2any to convert HEIC to PNG
+                heic2any({
+                    blob: fileObj.originalFile,
+                    toType: "image/png",
+                    quality: 1.0 // Use highest quality for PNG
+                })
+                .then(pngBlob => {
+                    updateProgress(fileObj.id, 75);
                     
-                    // Save original data URL
-                    fileObj.originalDataUrl = e.target.result;
+                    // Create a URL for the PNG blob
+                    const pngUrl = URL.createObjectURL(pngBlob);
                     
-                    // Create image
-                    const img = new Image();
-                    
-                    img.onload = function() {
-                        // Image has loaded
-                        updateProgress(fileObj.id, 75);
+                    // Update file object
+                    const fileIndex = convertedFiles.findIndex(f => f.id === fileObj.id);
+                    if (fileIndex !== -1) {
+                        convertedFiles[fileIndex].dataUrl = pngUrl;
+                        convertedFiles[fileIndex].convertedSize = pngBlob.size;
+                        convertedFiles[fileIndex].blobData = pngBlob;
                         
-                        // Convert to PNG
-                        convertToPNG(img, fileObj);
-                    };
+                        // Also generate a preview from the original HEIC for comparison
+                        heic2any({
+                            blob: fileObj.originalFile,
+                            toType: "image/jpeg",
+                            quality: 1.0
+                        })
+                        .then(previewBlob => {
+                            // Create URL for the preview
+                            const previewUrl = URL.createObjectURL(previewBlob);
+                            convertedFiles[fileIndex].originalDataUrl = previewUrl;
+                        })
+                        .catch(err => {
+                            console.error('Error creating preview:', err);
+                        });
+                        
+                        // Update preview
+                        updateFilePreview(fileObj.id, pngUrl);
+                        updateFileInfo(fileObj.id);
+                        
+                        // Mark as complete
+                        updateProgress(fileObj.id, 100);
+                        
+                        // Check if all files are processed
+                        checkAllProcessed();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error converting HEIC to PNG:', error);
+                    showErrorMessage(`Error converting file: ${fileObj.originalName}`);
                     
-                    img.onerror = function() {
-                        // Image failed to load
-                        updateProgress(fileObj.id, 0);
-                        showErrorMessage('Failed to load image: ' + fileObj.originalName);
-                    };
-                    
-                    // Load the image
-                    img.src = e.target.result;
-                };
-                
-                reader.onerror = function() {
-                    // File reading failed
-                    showErrorMessage('Failed to read file: ' + fileObj.originalName);
-                };
-                
-                // Read the file as a data URL
-                reader.readAsDataURL(fileObj.originalFile);
+                    // Update UI to show error state
+                    const fileItem = document.querySelector(`.converted-item[data-id="${fileObj.id}"]`);
+                    if (fileItem) {
+                        const progressText = fileItem.querySelector('.converted-item-progress-text');
+                        if (progressText) {
+                            progressText.textContent = 'Error';
+                            progressText.style.color = 'red';
+                        }
+                        
+                        const sizeInfo = fileItem.querySelector('.converted-item-size');
+                        if (sizeInfo) {
+                            sizeInfo.innerHTML = `
+                                <span>${formatFileSize(fileObj.originalSize)}</span>
+                                <span>→</span>
+                                <span style="color: red">Failed</span>
+                            `;
+                        }
+                    }
+                });
             }
             
             // Check if all files have been processed
             function checkAllProcessed() {
-                const allProcessed = convertedFiles.every(file => file.progress >= 100);
+                const allProcessed = convertedFiles.every(file => file.progress >= 100 || file.progress === -1);
                 
                 if (allProcessed) {
                     // Switch to converted state
@@ -341,40 +377,6 @@
                             }, 300);
                         }
                     }
-                }
-            }
-            
-            // Convert image to PNG
-            function convertToPNG(img, file) {
-                // Create canvas for conversion
-                const canvas = document.createElement('canvas');
-                canvas.width = img.width;
-                canvas.height = img.height;
-
-                const ctx = canvas.getContext('2d');
-                // Draw the image to canvas (preserving transparency if any)
-                ctx.drawImage(img, 0, 0);
-
-                // Convert to PNG (with transparency)
-                const pngDataUrl = canvas.toDataURL('image/png');
-
-                // Update file info
-                const fileIndex = convertedFiles.findIndex(f => f.id === file.id);
-                if (fileIndex !== -1) {
-                    convertedFiles[fileIndex].dataUrl = pngDataUrl;
-                    convertedFiles[fileIndex].convertedSize = Math.round(pngDataUrl.length * 0.75);
-                    convertedFiles[fileIndex].progress = 100;
-                    
-                    // Update the preview image
-                    updateFilePreview(file.id, pngDataUrl);
-                    updateFileInfo(file.id);
-                    
-                    // Update progress to 100%
-                    updateProgress(file.id, 100);
-                    
-                    // Check if all files processed only on the last file
-                    // to avoid multiple DOM updates
-                    setTimeout(checkAllProcessed, 50);
                 }
             }
             
@@ -430,7 +432,7 @@
                 }
             }
 
-            // Add file to grid
+            // Add file to grid initially with progress bar
             function addFileToGrid(file) {
                 const item = document.createElement('div');
                 item.className = 'converted-item';
@@ -438,7 +440,7 @@
                 
                 // Split filename and extension
                 const nameParts = splitFilename(file.pngName);
-                
+
                 item.innerHTML = `
                     <div class="converted-item-select" data-id="${file.id}">
                         <svg viewBox="0 0 24 24">
@@ -454,7 +456,7 @@
                         <div class="converted-item-filename">
                             <span class="filename-name">${nameParts.name}</span>
                             <span class="filename-ext">.${nameParts.ext}</span>
-                        </div>
+                    </div>
                         <div class="converted-item-size">
                             <span>${formatFileSize(file.originalSize)}</span>
                             <span>→</span>
@@ -462,7 +464,7 @@
                         </div>
                     </div>
                 `;
-                
+
                 convertedGrid.appendChild(item);
                 
                 // Add click event to select the item
@@ -489,10 +491,10 @@
                     }
                 });
                 
-                // Add click event for select icon
+                // Add click event for the select icon
                 const selectIcon = item.querySelector('.converted-item-select');
                 selectIcon.addEventListener('click', (e) => {
-                    e.stopPropagation();
+                    e.stopPropagation(); // Prevent the parent click from triggering
                     toggleFileSelection(file.id);
                 });
             }
@@ -611,10 +613,10 @@
             
             // Download a specific file
             function downloadFile(file) {
-                const link = document.createElement('a');
-                link.href = file.dataUrl;
-                link.download = file.pngName;
-                link.click();
+                const a = document.createElement('a');
+                a.href = file.dataUrl;
+                a.download = file.pngName;
+                a.click();
             }
 
             // Clear all files
@@ -624,15 +626,15 @@
                     Array.from(selectedFiles).forEach(fileId => {
                         const fileIndex = convertedFiles.findIndex(file => file.id === fileId);
                         if (fileIndex !== -1) {
-                            // Free memory by revoking data URLs
-                            if (fileIndex !== -1 && convertedFiles[fileIndex].dataUrl) {
-                                // URL.revokeObjectURL is not needed for data URLs,
-                                // but we should remove the reference to let garbage collection happen
-                                convertedFiles[fileIndex].dataUrl = null;
-                                convertedFiles[fileIndex].originalDataUrl = null;
+                            // Revoke URLs to prevent memory leaks
+                            if (convertedFiles[fileIndex].dataUrl) {
+                                URL.revokeObjectURL(convertedFiles[fileIndex].dataUrl);
                             }
-                            
-                            // Remove the element from DOM
+                            if (convertedFiles[fileIndex].originalDataUrl) {
+                                URL.revokeObjectURL(convertedFiles[fileIndex].originalDataUrl);
+                            }
+
+                            // Remove from DOM
                             const fileElement = document.querySelector(`.converted-item[data-id="${fileId}"]`);
                             if (fileElement) {
                                 fileElement.remove();
@@ -657,6 +659,15 @@
                     }
                 } else {
                     // Clear all files
+                    convertedFiles.forEach(file => {
+                        if (file.dataUrl) {
+                            URL.revokeObjectURL(file.dataUrl);
+                        }
+                        if (file.originalDataUrl) {
+                            URL.revokeObjectURL(file.originalDataUrl);
+                        }
+                    });
+                    
                     convertedFiles = [];
                     selectedFiles.clear();
                     convertedGrid.innerHTML = '';
@@ -707,12 +718,13 @@
                     const files = dt.files;
                     
                     if (files.length > 0) {
-                        // Check if at least one JPG file was dropped
-                        const jpgFiles = Array.from(files).filter(file => 
-                            file.type === 'image/jpeg' || file.type === 'image/jpg');
+                        // Check if at least one HEIC file was dropped
+                        const heicFiles = Array.from(files).filter(file => 
+                            file.type === 'image/heic' || 
+                            file.name.toLowerCase().endsWith('.heic'));
                         
-                        if (jpgFiles.length === 0) {
-                            showErrorMessage('Only JPG/JPEG files are supported. Please select valid files.');
+                        if (heicFiles.length === 0) {
+                            showErrorMessage('Only HEIC files are supported. Please select valid files.');
                             return;
                         }
                         
@@ -730,7 +742,7 @@
 
             fileInput.addEventListener('change', function () {
                 if (this.files && this.files.length > 0) {
-                handleFiles(this.files);
+                    handleFiles(this.files);
                 } else {
                     // No files selected (user canceled)
                     console.log('File selection canceled');
@@ -858,4 +870,4 @@
     </script>
 </body>
 
-</html>
+</html> 

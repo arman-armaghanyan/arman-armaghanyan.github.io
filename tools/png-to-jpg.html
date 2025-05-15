@@ -18,553 +18,51 @@
             font-family: 'Bricolage Grotesque', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             overflow-x: hidden;
         }
-
-        .page-container {
-            display: flex;
-            min-height: 100vh;
-            flex-direction: row;
-        }
-
-        .sidebar {
-            width: 300px;
-            background-color: var(--color-surface);
-            padding: 32px;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 100;
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar-header {
-            margin-bottom: 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .sidebar-header a {
-            text-decoration: none;
-            color: var(--color-text);
-        }
-
-        .sidebar-header h1 {
-            font-size: 32px;
-            margin: 0;
-            transition: color 0.3s ease;
-        }
-
-        .sidebar-header h1:hover {
-            color: var(--color-primary);
-        }
-
-        .sidebar-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--color-text);
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .mobile-header {
-            display: none;
-            background-color: var(--color-surface);
-            padding: 16px;
-            position: sticky;
-            top: 0;
-            z-index: 99;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .mobile-header a {
-            text-decoration: none;
-            color: var(--color-text);
-        }
-
-        .mobile-header h1 {
-            font-size: 24px;
-            margin: 0;
-        }
-
-        .sidebar-tools {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .sidebar-tool {
-            padding: 12px;
-            text-decoration: none;
-            color: var(--color-text);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar-tool:hover {
-            background-color: var(--color-surface-hover);
-        }
-
-        .sidebar-tool.active {
-            background-color: var(--color-primary);
-            color: var(--color-background);
-        }
-
-        .sidebar-tool.active:hover {
-            background-color: var(--color-primary-hover);
-        }
-
-        .sidebar-tool i {
-            font-size: 20px;
-            width: 24px;
-            height: 24px;
-        }
-
-        .sidebar-tool h3 {
-            font-size: 16px;
-            font-weight: 400;
-            margin: 0;
-        }
-
-        .sidebar-tool[locked] {
-            opacity: 0.2;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        .sidebar-tool[new]::before {
-            content: 'New';
-            background-color: var(--color-success);
-            color: var(--color-background);
-            padding: 2px 8px;
-            font-size: 12px;
-            margin-left: auto;
-        }
-
-        .main-content {
-            flex: 1;
-            margin-left: 300px;
-            padding: 32px;
-        }
-
-        .tool-section {
-            background-color: var(--color-surface);
-            padding: 32px;
-            margin-bottom: 16px;
-        }
-
-        .tool-section h2 {
-            font-size: 24px;
-            margin-bottom: 16px;
-            color: var(--color-text);
-        }
-
-        .tool-section p {
-            color: var(--color-text-secondary);
-            line-height: 1.6;
-        }
-
-        /* Tool specific styles */
-        .tool-container {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .tool-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .tool-header i {
-            font-size: 32px;
-            color: var(--color-text);
-        }
-
-        .tool-header h1 {
-            font-size: 32px;
-            color: var(--color-text);
-            margin: 0;
-        }
-
-        .tool-actions {
-            display: flex;
-            gap: 16px;
-        }
-
-        .tool-button {
-            background-color: var(--color-primary);
-            color: var(--color-background);
-            border: none;
-            padding: 12px 24px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-
-        .tool-button:hover {
-            background-color: var(--color-primary-hover);
-        }
-
-        .tool-button.secondary {
-            background-color: var(--color-text-secondary);
-        }
-
-        .tool-button.secondary:hover {
-            background-color: var(--color-primary-hover);
-        }
-
-        .tool-dropzone {
-            border: 2px dashed var(--color-border);
-            padding: 48px;
-            text-align: center;
-            cursor: pointer;
-            transition: border-color 0.3s ease;
-            background-color: var(--color-background);
-        }
-
-        .tool-dropzone:hover {
-            border-color: var(--color-primary);
-        }
-
-        .tool-dropzone i {
-            font-size: 48px;
-            color: var(--color-text-secondary);
-            margin-bottom: 16px;
-        }
-
-        .tool-dropzone p {
-            color: var(--color-text-secondary);
-            margin: 0;
-        }
-
-        .tool-settings {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .tool-setting {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .tool-setting label {
-            color: var(--color-text);
-            min-width: 120px;
-        }
-
-        .tool-setting input[type="range"] {
-            flex: 1;
-            accent-color: var(--color-primary);
-        }
-
-        .tool-setting input[type="number"] {
-            width: 80px;
-            background-color: var(--color-background);
-            border: 1px solid var(--color-border);
-            color: var(--color-text);
-            padding: 8px;
-        }
-
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 250px;
-            }
-            
-            .main-content {
-                margin-left: 250px;
-                padding: 24px;
-            }
-            
-            .tool-section {
-                padding: 24px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .page-container {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 80%;
-                max-width: 300px;
-                transform: translateX(-100%);
-                position: fixed;
-                top: 0;
-                left: 0;
-            }
-            
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            
-            .sidebar-toggle {
-                display: block;
-            }
-            
-            .mobile-header {
-                display: flex;
-            }
-            
-            .main-content {
-                margin-left: 0;
-                padding: 16px;
-            }
-            
-            .tool-section {
-                padding: 20px;
-            }
-            
-            .tool-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            
-            .tool-header h1 {
-                font-size: 28px;
-            }
-            
-            .tool-actions {
-                flex-direction: column;
-                width: 100%;
-            }
-            
-            .tool-button {
-                width: 100%;
-            }
-            
-            .tool-dropzone {
-                padding: 24px;
-            }
-            
-            .tool-setting {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .tool-setting label {
-                margin-bottom: 8px;
-                min-width: auto;
-            }
-            
-            .tool-setting input[type="range"] {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .tool-section {
-                padding: 16px;
-            }
-            
-            .tool-dropzone {
-                padding: 16px;
-            }
-            
-            .tool-dropzone i {
-                font-size: 32px;
-            }
-            
-            .tool-header h1 {
-                font-size: 24px;
-            }
-        }
-
-        .similar-tools-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-
-        .similar-tool {
-            background-color: var(--color-surface);
-            padding: 24px;
-            text-decoration: none;
-            color: var(--color-text);
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .similar-tool:hover {
-            background-color: var(--color-surface-hover);
-            transform: translateY(-5px);
-        }
-
-        .similar-tool[locked] {
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        .similar-tool[locked]:hover {
-            transform: none;
-        }
-
-        .similar-tool i {
-            font-size: 24px;
-            margin-bottom: 12px;
-        }
-
-        .similar-tool h3 {
-            font-size: 18px;
-            margin-bottom: 8px;
-        }
-
-        .similar-tool p {
-            font-size: 14px;
-            color: var(--color-text-secondary);
-            margin: 0;
-        }
-
-        .similar-tool .new-badge {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background-color: var(--color-success);
-            color: var(--color-background);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        @media (max-width: 992px) {
-            .similar-tools-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .similar-tools-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* PNG to JPG specific styles */
-        .converted-items {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-
-        .converted-items.active {
-            max-height: 1000px;
-        }
-
-        .converted-item {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            background-color: var(--color-background);
-            padding: 16px;
-            border: 1px solid var(--color-border);
-            position: relative;
-        }
-
-        .converted-item img {
-            width: 64px;
-            height: 64px;
-            object-fit: cover;
-        }
-
-        .converted-item-info {
-            flex: 1;
-        }
-
-        .converted-item-info h3 {
-            margin: 0 0 8px 0;
-            font-size: 16px;
-        }
-
-        .converted-item-info p {
-            margin: 0;
-            font-size: 14px;
-            color: var(--color-text-secondary);
-        }
-
-        .converted-item-actions {
-            display: flex;
-            gap: 8px;
-            margin-left: auto;
-        }
-
-        .converted-item-action {
-            background-color: var(--color-surface);
-            border: none;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .converted-item-action:hover {
-            background-color: var(--color-primary);
-            color: var(--color-background);
-        }
-
-        .tool-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
         
         @media (max-width: 768px) {
-            .converted-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .converted-item img {
-                width: 100%;
-                height: auto;
-                max-height: 200px;
-                margin-bottom: 8px;
-            }
-            
-            .converted-item-actions {
-                margin-left: 0;
-                margin-top: 8px;
-                width: 100%;
-                justify-content: space-between;
-            }
-        }
-        
-        /* Overlay for when sidebar is open on mobile */
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 99;
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar-overlay.open {
-                display: block;
+            /* Ensure buttons are properly sized */
+            #download-btn, #quality-btn, #clear-btn, #add-more-btn {
+                padding: 8px;
+                white-space: nowrap;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="page-container">
+    <div class="page-container" id="page-container">
+        <!-- Drop indicator for full-page drop -->
+        <div class="drop-indicator">
+            <i class="fas fa-cloud-upload-alt" style="font-size: 64px; margin-bottom: 16px;"></i>
+            <h2>Drop PNG files here to convert</h2>
+            <p>Maximum 100 files</p>
+        </div>
+        
+        <!-- Comparison Popup -->
+        <div class="comparison-popup" id="comparison-popup">
+            <div class="comparison-popup-header">
+                <h2 class="comparison-popup-title" id="comparison-popup-title">Image Comparison</h2>
+                <button class="comparison-popup-close" id="comparison-popup-close">×</button>
+            </div>
+            <div class="comparison-popup-content">
+                <div class="comparison-image-container" id="comparison-container">
+                    <img class="comparison-image" id="comparison-after" src="" alt="JPEG preview">
+                    <div class="comparison-before" id="comparison-before-container">
+                        <img id="comparison-before" src="" alt="PNG original">
+                    </div>
+                    <div class="comparison-separator" id="comparison-separator"></div>
+                    <div class="comparison-handle" id="comparison-handle"></div>
+                </div>
+            </div>
+            <div class="comparison-popup-controls">
+                <div class="comparison-quality-control">
+                    <label for="comparison-quality-slider">Quality:</label>
+                    <input type="range" id="comparison-quality-slider" min="1" max="100" value="80">
+                    <input type="number" id="comparison-quality-number" min="1" max="100" value="80">
+                </div>
+            </div>
+        </div>
+        
         <!-- Mobile Header -->
         <div class="mobile-header">
             <button class="sidebar-toggle" onclick="toggleSidebar()">
@@ -601,44 +99,94 @@
                     <h1>PNG to JPG</h1>
                 </div>
 
-                <div class="tool-container">
+                <!-- Updated header actions with plus button -->
+                <div class="header-actions" id="header-actions" style="display: none;">
+                    <button class="tool-button" id="download-btn">
+                        <i class="fas fa-download"></i>
+                        <span>Download All</span>
+                    </button>
+                    <button class="tool-button" id="add-more-btn">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <button class="tool-button" id="quality-btn">
+                        <i class="fas fa-sliders-h"></i>
+                    </button>
+                    <button class="tool-button" id="clear-btn">
+                        <i class="fas fa-trash"></i>
+                        <span>Clear All</span>
+                    </button>
+                </div>
 
+                <div class="tool-container">
                     <!-- Tool specific content goes here -->
+                    <div id="initial-state">
                     <div class="tool-dropzone" id="dropzone">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <p>Drag and drop your PNG files here or click to browse</p>
-                        <p>Maximum 20 files, PNG format only</p>
+                        <p>Maximum 100 files, PNG format only</p>
                         <input type="file" id="file-input" multiple accept=".png" style="display: none;">
+                        </div>
                     </div>
 
-                    <div class="converted-items" id="converted-items">
-                        <!-- Converted items will be added here dynamically -->
+                    <div id="processing-state" style="display: none;">
+                        <!-- Processing state will be shown here -->
+                        <div class="tool-actions-container">
+                            <div class="empty-state">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Processing your images...</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="tool-buttons" style="display: none;" id="tool-buttons">
-                        <button class="tool-button" id="download-all-btn">Download All</button>
-                        <button class="tool-button" id="upload-more-btn">Upload More</button>
-                        <button class="tool-button" id="settings-all-btn">Settings for All Images</button>
-                        <button class="tool-button" id="clear-all-btn">Clear All</button>
+                    <div id="converted-state" style="display: none;">
+                        <div class="tool-actions-container">
+                            
+                            <div class="converted-grid" id="converted-grid">
+                                <!-- Converted images will be added here dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Updated quality dialog -->
+            <div class="quality-dialog" id="quality-dialog">
+                <div class="quality-dialog-content">
+                    <div class="quality-dialog-header">
+                        <h3>Image Quality Settings</h3>
+                        <button class="quality-dialog-close" id="quality-dialog-close">×</button>
+                    </div>
+                    <div class="quality-dialog-body">
+                        <p>Adjust the quality of selected images. Lower quality means smaller file size.</p>
+                        <div class="quality-dialog-range">
+                            <div class="quality-dialog-range-input">
+                                <input type="range" id="quality-slider" min="1" max="100" value="80">
+                                <input type="number" id="quality-number" min="1" max="100" value="80">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="quality-dialog-footer">
+                        <button class="tool-button secondary" id="quality-cancel-btn">Cancel</button>
+                        <button class="tool-button" id="quality-apply-btn">Apply</button>
                     </div>
                 </div>
             </div>
 
             <div class="tool-section">
                 <h2>How to Use</h2>
-                <p>1. Upload your PNG files using the dropzone above (up to 20 files at once)<br>
-                    2. Adjust quality settings for individual images or all images at once<br>
-                    3. Download individual images or all converted images at once<br>
-                    4. Clear all files or upload more PNG images as needed</p>
+                <p>1. Upload your PNG files by dragging them anywhere on the page or clicking the upload area<br>
+                   2. Select images by clicking on them<br>
+                   3. Adjust quality settings if needed<br>
+                   4. Download selected images or all converted images with the download button</p>
             </div>
 
-            <div class="tool-section">
+            <!-- <div class="tool-section">
                 <h2>About PNG to JPG</h2>
                 <p>This tool allows you to quickly convert PNG images to JPEG format. While PNG files support
                     transparency and lossless compression, JPG files are typically smaller and better suited for
                     photographs or web images where transparency isn't needed. You can control the quality of the output
                     JPG files to balance between file size and image quality.</p>
-            </div>
+            </div> -->
 
             <div>
                 <div class="similar-tools-grid">
@@ -649,6 +197,7 @@
     </div>
 
     <script src="../js/presets.js"></script>
+    <script src="../js/image-comparison.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Generate sidebar tools
@@ -722,37 +271,228 @@
             }
 
             // PNG to JPG converter functionality
+            const pageContainer = document.getElementById('page-container');
             const dropzone = document.getElementById('dropzone');
             const fileInput = document.getElementById('file-input');
-            const convertedItems = document.getElementById('converted-items');
-            const downloadAllBtn = document.getElementById('download-all-btn');
-            const uploadMoreBtn = document.getElementById('upload-more-btn');
-            const settingsAllBtn = document.getElementById('settings-all-btn');
-            const clearAllBtn = document.getElementById('clear-all-btn');
-            const toolButtons = document.getElementById('tool-buttons');
+            const initialState = document.getElementById('initial-state');
+            const processingState = document.getElementById('processing-state');
+            const convertedState = document.getElementById('converted-state');
+            const convertedGrid = document.getElementById('converted-grid');
+            const headerActions = document.getElementById('header-actions');
+            const downloadBtn = document.getElementById('download-btn');
+            const addMoreBtn = document.getElementById('add-more-btn');
+            const qualityBtn = document.getElementById('quality-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            
+            // Quality dialog elements
+            const qualityDialog = document.getElementById('quality-dialog');
+            const qualitySlider = document.getElementById('quality-slider');
+            const qualityNumber = document.getElementById('quality-number');
+            const qualityCancelBtn = document.getElementById('quality-cancel-btn');
+            const qualityApplyBtn = document.getElementById('quality-apply-btn');
+            const qualityDialogClose = document.getElementById('quality-dialog-close');
 
             let convertedFiles = [];
+            let selectedFiles = new Set();
+            const MAX_FILES = 100;
+            let defaultQuality = 80;
+
+            // Initialize the image comparison component
+            ImageComparison.init({
+                onQualityChange: function(quality, data) {
+                    if (data && data.id) {
+                        const fileIndex = convertedFiles.findIndex(file => file.id === data.id);
+                        if (fileIndex !== -1) {
+                            const file = convertedFiles[fileIndex];
+                            file.quality = quality;
+                            
+                            // Re-convert the image with new quality
+                            const img = new Image();
+                            img.onload = function() {
+                                convertImage(img, file);
+                                
+                                // Update the comparison popup with the new image
+                                if (file.dataUrl) {
+                                    ImageComparison.updateAfterImage(file.dataUrl);
+                                }
+                            };
+                            
+                            img.src = file.originalDataUrl;
+                        }
+                    }
+                }
+            });
 
             // Handle file selection
             function handleFiles(files) {
                 // Filter for PNG files only
                 const pngFiles = Array.from(files).filter(file => file.type === 'image/png');
 
-                // Limit to 20 files
-                const filesToProcess = pngFiles.slice(0, 20);
-
-                if (filesToProcess.length === 0) {
-                    alert('Please select valid PNG files');
+                if (pngFiles.length === 0) {
+                    // Create and show error message
+                    showErrorMessage('Please select valid PNG files');
                     return;
                 }
+                
+                // Check if we're exceeding the maximum number of files
+                if (convertedFiles.length + pngFiles.length > MAX_FILES) {
+                    showErrorMessage(`You can only convert up to ${MAX_FILES} files at once.`);
+                    return;
+                }
+                
+                // Process files
+                const filesToProcess = pngFiles.slice(0, MAX_FILES - convertedFiles.length);
+
+                // Show processing state
+                initialState.style.display = 'none';
+                processingState.style.display = 'block';
+                convertedState.style.display = 'none';
+                
+                // Show action buttons
+                headerActions.style.display = 'flex';
 
                 // Process each file
                 filesToProcess.forEach(file => {
+                    processFile(file);
+                });
+                
+                // Setup mobile interactions for any new items
+                setTimeout(setupMobileInteractions, 100);
+            }
+            
+            // Function to show error message
+            function showErrorMessage(message) {
+                // Check if error message element already exists
+                let errorEl = document.getElementById('error-message');
+                
+                // Create it if it doesn't exist
+                if (!errorEl) {
+                    errorEl = document.createElement('div');
+                    errorEl.id = 'error-message';
+                    
+                    // Add close button
+                    const closeBtn = document.createElement('button');
+                    closeBtn.innerHTML = '&times;';
+                    closeBtn.onclick = function() {
+                        errorEl.style.display = 'none';
+                    };
+                    
+                    errorEl.appendChild(closeBtn);
+                    
+                    // Insert at the top of the tool container
+                    const toolContainer = document.querySelector('.tool-container');
+                    toolContainer.insertBefore(errorEl, toolContainer.firstChild);
+                } else {
+                    // Reset display if it was hidden
+                    errorEl.style.display = 'block';
+                }
+                
+                // Add message text element
+                const textSpan = document.createElement('span');
+                textSpan.textContent = message;
+                
+                // Clear any previous message
+                if (errorEl.querySelector('span')) {
+                    errorEl.querySelector('span').remove();
+                }
+                
+                // Add after the close button
+                errorEl.appendChild(textSpan);
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    errorEl.style.display = 'none';
+                }, 5000);
+            }
+
+            // Process a single file
+            function processFile(file) {
                     const reader = new FileReader();
+                
+                // Create a placeholder for this file
+                const fileId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                const convertedFile = {
+                    id: fileId,
+                    originalName: file.name,
+                    jpegName: file.name.replace('.png', '.jpg'),
+                    originalSize: file.size,
+                    convertedSize: 0,
+                    quality: defaultQuality,
+                    dataUrl: null,
+                    progress: 0,
+                    originalDataUrl: null
+                };
+                
+                convertedFiles.push(convertedFile);
+                
+                // Add to grid with progress animation
+                addFileToGrid(convertedFile);
+                
+                // Show converted state
+                initialState.style.display = 'none';
+                processingState.style.display = 'none';
+                convertedState.style.display = 'block';
+                
+                // Simulate progress updates
+                simulateProgress(fileId);
 
                     reader.onload = function (e) {
                         const img = new Image();
+                    
+                    // Store original data URL for quality adjustments
+                    convertedFile.originalDataUrl = e.target.result;
+                    
                         img.onload = function () {
+                        // Convert the image once it's loaded
+                        convertImage(img, convertedFile);
+                    };
+                    
+                    img.src = e.target.result;
+                };
+                
+                reader.readAsDataURL(file);
+            }
+            
+            // Simulate progress updates
+            function simulateProgress(fileId) {
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 10;
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(interval);
+                    }
+                    
+                    updateProgress(fileId, progress);
+                }, 100);
+            }
+            
+            // Update progress display
+            function updateProgress(fileId, progress) {
+                const fileIndex = convertedFiles.findIndex(file => file.id === fileId);
+                if (fileIndex !== -1) {
+                    convertedFiles[fileIndex].progress = progress;
+                    
+                    const progressBar = document.querySelector(`.converted-item[data-id="${fileId}"] .converted-item-progress`);
+                    const progressText = document.querySelector(`.converted-item[data-id="${fileId}"] .converted-item-progress-text`);
+                    
+                    if (progressBar && progressText) {
+                        progressBar.style.width = `${progress}%`;
+                        progressText.textContent = `${Math.round(progress)}%`;
+                        
+                        // Hide progress elements when complete
+                        if (progress >= 100) {
+                            setTimeout(() => {
+                                progressBar.style.display = 'none';
+                                progressText.style.display = 'none';
+                            }, 300);
+                        }
+                    }
+                }
+            }
+            
+            // Convert image to JPEG
+            function convertImage(img, file) {
                             // Create canvas for conversion
                             const canvas = document.createElement('canvas');
                             canvas.width = img.width;
@@ -764,240 +504,527 @@
                             ctx.fillRect(0, 0, canvas.width, canvas.height);
                             ctx.drawImage(img, 0, 0);
 
-                            // Default quality
-                            const quality = 0.8;
-
                             // Convert to JPEG
-                            const jpegDataUrl = canvas.toDataURL('image/jpeg', quality);
-
-                            // Add to converted files
-                            const convertedFile = {
-                                originalName: file.name,
-                                jpegName: file.name.replace('.png', '.jpg'),
-                                dataUrl: jpegDataUrl,
-                                quality: quality * 100,
-                                originalSize: file.size,
-                                convertedSize: Math.round(jpegDataUrl.length * 0.75)
-                            };
-
-                            convertedFiles.push(convertedFile);
-
-                            // Add to UI
-                            addConvertedItem(convertedFile);
-                        };
-
-                        img.src = e.target.result;
-                    };
-
-                    reader.readAsDataURL(file);
+                const jpegDataUrl = canvas.toDataURL('image/jpeg', file.quality / 100);
+                
+                // Update file info
+                const fileIndex = convertedFiles.findIndex(f => f.id === file.id);
+                if (fileIndex !== -1) {
+                    convertedFiles[fileIndex].dataUrl = jpegDataUrl;
+                    convertedFiles[fileIndex].convertedSize = Math.round(jpegDataUrl.length * 0.75);
+                    convertedFiles[fileIndex].progress = 100;
+                    
+                    // Update the preview image
+                    updateFilePreview(file.id, jpegDataUrl);
+                    updateFileInfo(file.id);
+                }
+            }
+            
+            // Set up event listeners for mobile and touch devices
+            function setupMobileInteractions() {
+                // Make sure selection works well on touch devices
+                document.querySelectorAll('.converted-item').forEach(item => {
+                    // Skip if already initialized
+                    if (item.hasAttribute('touch-initialized')) return;
+                    
+                    item.setAttribute('touch-initialized', 'true');
+                    
+                    item.addEventListener('touchstart', function(e) {
+                        // Add a small delay to differentiate between tap and scroll
+                        this.touchStarted = Date.now();
+                    }, { passive: true });
+                    
+                    item.addEventListener('touchend', function(e) {
+                        // If touch duration was short, treat as a tap
+                        const touchDuration = Date.now() - (this.touchStarted || 0);
+                        if (touchDuration < 300) {
+                            const fileId = this.dataset.id;
+                            toggleFileSelection(fileId);
+                            e.preventDefault();
+                        }
+                    });
                 });
-
-                // Hide dropzone, show converted items and buttons
-                dropzone.style.display = 'none';
-                convertedItems.classList.add('active');
-                toolButtons.style.display = 'flex';
+                
+                // Better handling of buttons for touch
+                document.querySelectorAll('.tool-button').forEach(button => {
+                    // Skip if already initialized
+                    if (button.hasAttribute('touch-initialized')) return;
+                    
+                    button.setAttribute('touch-initialized', 'true');
+                    
+                    button.addEventListener('touchstart', function() {
+                        this.classList.add('active');
+                    }, { passive: true });
+                    
+                    button.addEventListener('touchend', function() {
+                        this.classList.remove('active');
+                    });
+                });
+                
+                // Ensure dropzone works well on mobile
+                if (!dropzone.hasAttribute('touch-initialized')) {
+                    dropzone.setAttribute('touch-initialized', 'true');
+                    
+                    dropzone.addEventListener('touchend', function(e) {
+                        fileInput.click();
+                        e.preventDefault();
+                    });
+                }
             }
 
-            // Add converted item to UI
-            function addConvertedItem(file) {
-                const index = convertedFiles.indexOf(file);
+            // Add file to grid initially with progress bar
+            function addFileToGrid(file) {
                 const item = document.createElement('div');
                 item.className = 'converted-item';
-                item.dataset.index = index;
+                item.dataset.id = file.id;
+                
+                // Split filename and extension
+                const nameParts = splitFilename(file.jpegName);
 
                 item.innerHTML = `
-                    <img src="${file.dataUrl}" alt="${file.jpegName}">
-                    <div class="converted-item-info">
-                        <h3>${file.jpegName}</h3>
-                        <p>Original: ${formatFileSize(file.originalSize)} • Converted: ${formatFileSize(file.convertedSize)} • Quality: ${file.quality}%</p>
+                    <div class="converted-item-select" data-id="${file.id}">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/>
+                        </svg>
                     </div>
-                    <div class="converted-item-actions">
-                        <button class="converted-item-action settings-btn" title="Adjust Quality">
-                            <i class="fas fa-cog"></i>
-                        </button>
-                        <button class="converted-item-action download-btn" title="Download">
-                            <i class="fas fa-download"></i>
-                        </button>
-                        <button class="converted-item-action remove-btn" title="Remove">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                    <div class="converted-item-preview">
+                        <div class="converted-item-progress" style="width: 0%"></div>
+                        <div class="converted-item-progress-text">0%</div>
+                        <img src="" alt="${file.jpegName}" style="display: none;">
+                    </div>
+                    <div class="converted-item-info">
+                        <div class="converted-item-filename">
+                            <span class="filename-name">${nameParts.name}</span>
+                            <span class="filename-ext">.${nameParts.ext}</span>
+                    </div>
+                        <div class="converted-item-size">
+                            <span>${formatFileSize(file.originalSize)}</span>
+                            <span>→</span>
+                            <span>Processing...</span>
+                        </div>
                     </div>
                 `;
 
-                convertedItems.appendChild(item);
-
-                // Add event listeners
-                item.querySelector('.settings-btn').addEventListener('click', () => adjustQuality(index));
-                item.querySelector('.download-btn').addEventListener('click', () => downloadFile(index));
-                item.querySelector('.remove-btn').addEventListener('click', () => removeFile(index));
+                convertedGrid.appendChild(item);
+                
+                // Add click event to select the item
+                item.addEventListener('click', () => {
+                    toggleFileSelection(file.id);
+                });
+                
+                // Add double-click event to open comparison popup
+                item.addEventListener('dblclick', () => {
+                    openComparisonPopup(file.id);
+                });
+                
+                // Add touch events for mobile
+                item.addEventListener('touchstart', function(e) {
+                    this.touchStarted = Date.now();
+                }, { passive: true });
+                
+                item.addEventListener('touchend', function(e) {
+                    const touchDuration = Date.now() - (this.touchStarted || 0);
+                    if (touchDuration < 300) {
+                        const fileId = this.dataset.id;
+                        toggleFileSelection(fileId);
+                        e.preventDefault();
+                    }
+                });
+                
+                // Add click event for the select icon
+                const selectIcon = item.querySelector('.converted-item-select');
+                selectIcon.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent the parent click from triggering
+                    toggleFileSelection(file.id);
+                });
             }
-
+            
+            // Update file preview with the converted image
+            function updateFilePreview(fileId, dataUrl) {
+                const preview = document.querySelector(`.converted-item[data-id="${fileId}"] .converted-item-preview img`);
+                if (preview) {
+                    preview.src = dataUrl;
+                    preview.style.display = 'block';
+                }
+            }
+            
+            // Update file info with converted size
+            function updateFileInfo(fileId) {
+                const file = convertedFiles.find(f => f.id === fileId);
+                if (!file) return;
+                
+                const infoElement = document.querySelector(`.converted-item[data-id="${fileId}"] .converted-item-size`);
+                if (infoElement) {
+                    infoElement.innerHTML = `
+                        <span>${formatFileSize(file.originalSize)}</span>
+                        <span>→</span>
+                        <span>${formatFileSize(file.convertedSize)}</span>
+                    `;
+                }
+            }
+            
+            // Toggle file selection
+            function toggleFileSelection(fileId) {
+                const itemElement = document.querySelector(`.converted-item[data-id="${fileId}"]`);
+                const isCurrentlySelected = selectedFiles.has(fileId);
+                
+                if (isCurrentlySelected) {
+                    selectedFiles.delete(fileId);
+                    itemElement.classList.remove('selected');
+                } else {
+                    selectedFiles.add(fileId);
+                    itemElement.classList.add('selected');
+                }
+                
+                // Update download button text based on selection
+                updateDownloadButton();
+            }
+            
+            // Update download button text based on selection
+            function updateDownloadButton() {
+                const count = selectedFiles.size;
+                const downloadBtnSpan = downloadBtn.querySelector('span');
+                const clearBtnSpan = clearBtn.querySelector('span');
+                
+                if (count === 0) {
+                    downloadBtnSpan.textContent = 'Download All';
+                    clearBtnSpan.textContent = 'Clear All';
+                } else if (count === 1) {
+                    downloadBtnSpan.textContent = 'Download Selected';
+                    clearBtnSpan.textContent = 'Remove Selected';
+                } else {
+                    downloadBtnSpan.textContent = `Download ${count} Selected`;
+                    clearBtnSpan.textContent = `Remove ${count} Selected`;
+                }
+            }
+            
             // Format file size
             function formatFileSize(bytes) {
                 if (bytes < 1024) return bytes + ' B';
                 if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
                 return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
             }
-
-            // Adjust quality for a specific file
-            function adjustQuality(index) {
-                const file = convertedFiles[index];
-                const quality = prompt(`Adjust quality for ${file.jpegName} (1-100):`, file.quality);
-
-                if (quality !== null) {
-                    const newQuality = Math.max(1, Math.min(100, parseInt(quality)));
-
-                    // Update quality
-                    file.quality = newQuality;
-
-                    // Re-convert with new quality
-                    const img = new Image();
-                    img.onload = function () {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-
-                        const ctx = canvas.getContext('2d');
-                        ctx.fillStyle = '#FFFFFF';
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                        ctx.drawImage(img, 0, 0);
-
-                        // Convert with new quality
-                        file.dataUrl = canvas.toDataURL('image/jpeg', newQuality / 100);
-                        file.convertedSize = Math.round(file.dataUrl.length * 0.75);
-
-                        // Update UI
-                        const itemElement = document.querySelector(`.converted-item[data-index="${index}"]`);
-                        itemElement.querySelector('img').src = file.dataUrl;
-                        itemElement.querySelector('p').textContent = `Original: ${formatFileSize(file.originalSize)} • Converted: ${formatFileSize(file.convertedSize)} • Quality: ${file.quality}%`;
-                    };
-
-                    img.src = file.dataUrl;
+            
+            // Split filename into name and extension
+            function splitFilename(filename) {
+                const parts = filename.split('.');
+                const ext = parts.pop();
+                const name = parts.join('.');
+                return { name, ext };
+            }
+            
+            // Handle download button click
+            function handleDownload() {
+                if (selectedFiles.size > 0) {
+                    // Download selected files
+                    downloadSelectedFiles();
+                } else {
+                    // Download all files
+                    downloadAllFiles();
                 }
             }
+            
+            // Download selected files
+            function downloadSelectedFiles() {
+                if (selectedFiles.size === 0) return;
+                
+                selectedFiles.forEach(fileId => {
+                    const file = convertedFiles.find(f => f.id === fileId);
+                    if (file && file.dataUrl) {
+                        downloadFile(file);
+                    }
+                });
+            }
 
+            // Download all files
+            function downloadAllFiles() {
+                if (convertedFiles.length === 0) return;
+                
+                // Filter for files that have completed conversion
+                const completedFiles = convertedFiles.filter(file => file.dataUrl);
+
+                // Use setTimeout to avoid browser blocking multiple downloads
+                completedFiles.forEach((file, index) => {
+                    setTimeout(() => {
+                        downloadFile(file);
+                    }, index * 100);
+                });
+            }
+            
             // Download a specific file
-            function downloadFile(index) {
-                const file = convertedFiles[index];
+            function downloadFile(file) {
                 const link = document.createElement('a');
                 link.href = file.dataUrl;
                 link.download = file.jpegName;
                 link.click();
             }
-
-            // Remove a specific file
-            function removeFile(index) {
-                // Remove from array
-                convertedFiles.splice(index, index + 1);
+            
+            // Adjust quality of selected files
+            function showQualityDialog() {
+                // Use selected files if there are any, otherwise all files
+                const targetFiles = selectedFiles.size > 0 
+                    ? Array.from(selectedFiles).map(id => convertedFiles.find(f => f.id === id)).filter(Boolean)
+                    : convertedFiles;
                 
-                // Remove from UI
-                const itemToRemove = document.querySelector(`.converted-item[data-index="${index}"]`);
-                if (itemToRemove) {
-                    itemToRemove.remove();
-                }
+                if (targetFiles.length === 0) return;
                 
-                // Update indices for remaining items
-                document.querySelectorAll('.converted-item').forEach((item, newIndex) => {
-                    item.dataset.index = newIndex;
+                // Calculate average quality
+                const avgQuality = Math.round(
+                    targetFiles.reduce((sum, file) => sum + file.quality, 0) / targetFiles.length
+                );
+                
+                // Set dialog values
+                qualitySlider.value = avgQuality;
+                qualityNumber.value = avgQuality;
+                
+                // Show dialog
+                qualityDialog.classList.add('active');
+            }
+            
+            // Comparison popup functionality
+            const comparisonPopup = document.getElementById('comparison-popup');
+            const comparisonPopupTitle = document.getElementById('comparison-popup-title');
+            const comparisonPopupClose = document.getElementById('comparison-popup-close');
+            const comparisonContainer = document.getElementById('comparison-container');
+            const comparisonBeforeContainer = document.getElementById('comparison-before-container');
+            const comparisonSeparator = document.getElementById('comparison-separator');
+            const comparisonHandle = document.getElementById('comparison-handle');
+            const comparisonBefore = document.getElementById('comparison-before');
+            const comparisonAfter = document.getElementById('comparison-after');
+            const comparisonQualitySlider = document.getElementById('comparison-quality-slider');
+            const comparisonQualityNumber = document.getElementById('comparison-quality-number');
+            
+            let currentComparisonFile = null;
+            
+            // Open comparison popup for a file
+            function openComparisonPopup(fileId) {
+                const file = convertedFiles.find(f => f.id === fileId);
+                if (!file || !file.dataUrl || !file.originalDataUrl) return;
+                
+                ImageComparison.open({
+                    id: file.id,
+                    title: file.jpegName,
+                    beforeSrc: file.originalDataUrl,
+                    afterSrc: file.dataUrl,
+                    quality: file.quality
+                });
+            }
+            
+            // Set comparison position by percentage (0-100)
+            function setComparisonPosition(percent) {
+                comparisonBeforeContainer.style.width = `${percent}%`;
+                comparisonSeparator.style.left = `${percent}%`;
+                comparisonHandle.style.left = `${percent}%`;
+            }
+            
+            // Close comparison popup
+            function closeComparisonPopup() {
+                comparisonPopup.classList.remove('active');
+                currentComparisonFile = null;
+            }
+            
+            // Initialize comparison slider functionality
+            function initComparisonSlider() {
+                // Already handled by the ImageComparison component
+            }
+            
+            // Apply quality from comparison popup
+            function applyComparisonQuality() {
+                // Already handled by the ImageComparison component
+            }
+            
+            // Event listeners for comparison popup
+            comparisonPopupClose.addEventListener('click', closeComparisonPopup);
+            comparisonQualitySlider.addEventListener('input', function() {
+                comparisonQualityNumber.value = this.value;
+            });
+            
+            comparisonQualityNumber.addEventListener('input', function() {
+                comparisonQualitySlider.value = this.value;
+            });
+            
+            comparisonQualitySlider.addEventListener('change', applyComparisonQuality);
+            comparisonQualityNumber.addEventListener('change', applyComparisonQuality);
+            
+            // Apply quality settings to files
+            function applyQuality() {
+                const quality = parseInt(qualitySlider.value);
+                
+                // Apply to selected files if there are any, otherwise all files
+                const targetFileIds = selectedFiles.size > 0 
+                    ? Array.from(selectedFiles)
+                    : convertedFiles.map(file => file.id);
+                
+                targetFileIds.forEach(fileId => {
+                    const fileIndex = convertedFiles.findIndex(file => file.id === fileId);
+                    if (fileIndex !== -1) {
+                        const file = convertedFiles[fileIndex];
+                        file.quality = quality;
+                        
+                        // Re-convert the image with new quality
+                        const img = new Image();
+                        img.onload = function() {
+                            convertImage(img, file);
+                        };
+                        
+                        // Create a data URL from the original image
+                        img.src = file.originalDataUrl;
+                    }
                 });
                 
-                // If no items left, reset the UI
-                if (convertedFiles.length === 0) {
-                    convertedItems.classList.remove('active');
-                    dropzone.style.display = 'block';
-                    toolButtons.style.display = 'none';
-                }
+                hideQualityDialog();
+            }
+            
+            // Hide quality dialog
+            function hideQualityDialog() {
+                qualityDialog.classList.remove('active');
             }
 
-            // Download all files
-            downloadAllBtn.addEventListener('click', function () {
-                if (convertedFiles.length === 0) return;
-
-                // Use setTimeout to avoid browser blocking multiple downloads
-                convertedFiles.forEach((file, index) => {
-                    setTimeout(() => {
-                        downloadFile(index);
-                    }, index * 100);
-                });
-            });
-
-            // Upload more files
-            uploadMoreBtn.addEventListener('click', function () {
-                fileInput.click();
-            });
-
-            // Settings for all images
-            settingsAllBtn.addEventListener('click', function () {
-                if (convertedFiles.length === 0) return;
-
-                const quality = prompt('Set quality for all images (1-100):', '80');
-
-                if (quality !== null) {
-                    const newQuality = Math.max(1, Math.min(100, parseInt(quality)));
-
-                    // Update all files
-                    convertedFiles.forEach((file, index) => {
-                        file.quality = newQuality;
-
-                        // Re-convert with new quality
-                        const img = new Image();
-                        img.onload = function () {
-                            const canvas = document.createElement('canvas');
-                            canvas.width = img.width;
-                            canvas.height = img.height;
-
-                            const ctx = canvas.getContext('2d');
-                            ctx.fillStyle = '#FFFFFF';
-                            ctx.fillRect(0, 0, canvas.width, canvas.height);
-                            ctx.drawImage(img, 0, 0);
-
-                            // Convert with new quality
-                            file.dataUrl = canvas.toDataURL('image/jpeg', newQuality / 100);
-                            file.convertedSize = Math.round(file.dataUrl.length * 0.75);
-
-                            // Update UI
-                            const itemElement = document.querySelector(`.converted-item[data-index="${index}"]`);
-                            itemElement.querySelector('img').src = file.dataUrl;
-                            itemElement.querySelector('p').textContent = `Original: ${formatFileSize(file.originalSize)} • Converted: ${formatFileSize(file.convertedSize)} • Quality: ${file.quality}%`;
-                        };
-
-                        img.src = file.dataUrl;
-                    });
-                }
-            });
-
             // Clear all files
-            clearAllBtn.addEventListener('click', function () {
-                convertedFiles = [];
-                convertedItems.innerHTML = '';
-                convertedItems.classList.remove('active');
-                dropzone.style.display = 'block';
-                toolButtons.style.display = 'none';
-            });
-
-            // Dropzone event listeners
+            function clearAllFiles() {
+                if (selectedFiles.size > 0) {
+                    // Remove only selected files
+                    Array.from(selectedFiles).forEach(fileId => {
+                        const fileIndex = convertedFiles.findIndex(file => file.id === fileId);
+                        if (fileIndex !== -1) {
+                            // Free memory by revoking data URLs
+                            if (fileIndex !== -1 && convertedFiles[fileIndex].dataUrl) {
+                                // URL.revokeObjectURL is not needed for data URLs,
+                                // but we should remove the reference to let garbage collection happen
+                                convertedFiles[fileIndex].dataUrl = null;
+                                convertedFiles[fileIndex].originalDataUrl = null;
+                            }
+                            
+                            // Remove the element from DOM
+                            const fileElement = document.querySelector(`.converted-item[data-id="${fileId}"]`);
+                            if (fileElement) {
+                                fileElement.remove();
+                            }
+                            
+                            // Remove from array
+                            convertedFiles.splice(fileIndex, 1);
+                        }
+                    });
+                    
+                    // Clear selection
+                    selectedFiles.clear();
+                    
+                    // Update download button
+                    updateDownloadButton();
+                    
+                    // Show initial state if no files left
+                    if (convertedFiles.length === 0) {
+                        initialState.style.display = 'block';
+                        convertedState.style.display = 'none';
+                        headerActions.style.display = 'none';
+                    }
+                } else {
+                    // Clear all files
+                    convertedFiles = [];
+                    selectedFiles.clear();
+                    convertedGrid.innerHTML = '';
+                    initialState.style.display = 'block';
+                    convertedState.style.display = 'none';
+                    headerActions.style.display = 'none';
+                    updateDownloadButton();
+                }
+            }
+            
+            // Global drag and drop handling
+            function setupGlobalDragDrop() {
+                const dragCounter = (() => {
+                    let counter = 0;
+                    return {
+                        increase: () => ++counter,
+                        decrease: () => --counter,
+                        reset: () => { counter = 0; },
+                        get: () => counter
+                    };
+                })();
+                
+                // Prevent default on all drag events to allow drop
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    document.addEventListener(eventName, e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }, false);
+                });
+                
+                // Track drag enter/leave events with counter to handle child elements
+                document.addEventListener('dragenter', e => {
+                    dragCounter.increase();
+                    pageContainer.classList.add('dragover');
+                }, false);
+                
+                document.addEventListener('dragleave', e => {
+                    if (dragCounter.decrease() === 0) {
+                        pageContainer.classList.remove('dragover');
+                    }
+                }, false);
+                
+                document.addEventListener('drop', e => {
+                    dragCounter.reset();
+                    pageContainer.classList.remove('dragover');
+                    
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+                    
+                    if (files.length > 0) {
+                        // Check if at least one PNG file was dropped
+                        const pngFiles = Array.from(files).filter(file => file.type === 'image/png');
+                        
+                        if (pngFiles.length === 0) {
+                            showErrorMessage('Only PNG files are supported. Please select valid PNG files.');
+                            return;
+                        }
+                        
+                        handleFiles(files);
+                    }
+                }, false);
+            }
+            
+            // Event listeners
+            
+            // Dropzone
             dropzone.addEventListener('click', function () {
                 fileInput.click();
             });
 
             fileInput.addEventListener('change', function () {
+                if (this.files && this.files.length > 0) {
                 handleFiles(this.files);
+                } else {
+                    // No files selected (user canceled)
+                    console.log('File selection canceled');
+                }
             });
 
-            dropzone.addEventListener('dragover', function (e) {
-                e.preventDefault();
-                dropzone.style.borderColor = 'var(--color-primary)';
+            // Action buttons
+            downloadBtn.addEventListener('click', handleDownload);
+            addMoreBtn.addEventListener('click', function() {
+                fileInput.click();
             });
-
-            dropzone.addEventListener('dragleave', function () {
-                dropzone.style.borderColor = 'var(--color-border)';
+            qualityBtn.addEventListener('click', showQualityDialog);
+            clearBtn.addEventListener('click', clearAllFiles);
+            
+            // Quality dialog
+            qualitySlider.addEventListener('input', function() {
+                qualityNumber.value = this.value;
             });
-
-            dropzone.addEventListener('drop', function (e) {
-                e.preventDefault();
-                dropzone.style.borderColor = 'var(--color-border)';
-                handleFiles(e.dataTransfer.files);
+            
+            qualityNumber.addEventListener('input', function() {
+                qualitySlider.value = this.value;
             });
+            
+            qualityApplyBtn.addEventListener('click', applyQuality);
+            qualityCancelBtn.addEventListener('click', hideQualityDialog);
+            qualityDialogClose.addEventListener('click', hideQualityDialog);
+            
+            // Initialize
+            setupGlobalDragDrop();
+            setupMobileInteractions();
+            updateDownloadButton();
+            initComparisonSlider();
         });
 
         // Toggle sidebar on mobile
