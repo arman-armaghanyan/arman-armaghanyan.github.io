@@ -725,7 +725,7 @@ body {
 }
 
 .sidebar-tool[new]::after {
-    content: 'New';
+    content: 'Testing';
     background-color: var(--color-primary);
     color: var(--color-background);
     padding: 2px 8px;

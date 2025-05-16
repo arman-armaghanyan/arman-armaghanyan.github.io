@@ -91,6 +91,29 @@
             </div>
         </div>
 
+        <!-- Updated quality dialog -->
+        <div class="quality-dialog" id="quality-dialog">
+            <div class="quality-dialog-content">
+                <div class="quality-dialog-header">
+                    <h3>Image Quality Settings</h3>
+                    <button class="quality-dialog-close" id="quality-dialog-close">×</button>
+                </div>
+                <div class="quality-dialog-body">
+                    <p>Adjust the quality of selected images. Lower quality means smaller file size.</p>
+                    <div class="quality-dialog-range">
+                        <div class="quality-dialog-range-input">
+                            <input type="range" id="quality-slider" min="1" max="100" value="80">
+                            <input type="number" id="quality-number" min="1" max="100" value="80">
+                        </div>
+                    </div>
+                </div>
+                <div class="quality-dialog-footer">
+                    <button class="tool-button secondary" id="quality-cancel-btn">Cancel</button>
+                    <button class="tool-button" id="quality-apply-btn">Apply</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Main Content -->
         <main class="main-content">
             <div class="tool-section">
@@ -107,6 +130,9 @@
                     </button>
                     <button class="tool-button" id="add-more-btn">
                         <i class="fas fa-plus"></i>
+                    </button>
+                    <button class="tool-button" id="quality-btn">
+                        <i class="fas fa-sliders-h"></i>
                     </button>
                     <button class="tool-button" id="clear-btn">
                         <i class="fas fa-trash"></i>
@@ -181,20 +207,52 @@
             const headerActions = document.getElementById('header-actions');
             const downloadBtn = document.getElementById('download-btn');
             const addMoreBtn = document.getElementById('add-more-btn');
+            const qualityBtn = document.getElementById('quality-btn');
             const clearBtn = document.getElementById('clear-btn');
             const errorMessage = document.getElementById('error-message');
             const errorText = document.getElementById('error-text');
             const closeError = document.getElementById('close-error');
             const pageContainer = document.getElementById('page-container');
             
+            // Quality dialog elements
+            const qualityDialog = document.getElementById('quality-dialog');
+            const qualitySlider = document.getElementById('quality-slider');
+            const qualityNumber = document.getElementById('quality-number');
+            const qualityCancelBtn = document.getElementById('quality-cancel-btn');
+            const qualityApplyBtn = document.getElementById('quality-apply-btn');
+            const qualityDialogClose = document.getElementById('quality-dialog-close');
+            
             // State variables
             let convertedFiles = [];
             let selectedFiles = new Set();
             const MAX_FILES = 100;
+            const DEFAULT_QUALITY = 80;
 
             // Initialize the image comparison component
             ImageComparison.init({
-                qualityControlVisible: false  // No quality control needed for PNG conversion
+                qualityControlVisible: true,  // Enable quality control for WebP conversion
+                onQualityChange: function(quality, data) {
+                    if (data && data.id) {
+                        const fileIndex = convertedFiles.findIndex(file => file.id === data.id);
+                        if (fileIndex !== -1) {
+                            const file = convertedFiles[fileIndex];
+                            file.quality = quality;
+                            
+                            // Re-convert the image with new quality
+                            const img = new Image();
+                            img.onload = function() {
+                                convertImage(img, file);
+                                
+                                // Update the comparison popup with the new image
+                                if (file.dataUrl) {
+                                    document.getElementById('comparison-after').src = file.dataUrl;
+                                }
+                            };
+                            
+                            img.src = file.originalDataUrl;
+                        }
+                    }
+                }
             });
 
             // Setup event listeners for the dropzone
@@ -300,6 +358,11 @@
                     
                     // Save original data URL
                     fileObj.originalDataUrl = e.target.result;
+                    
+                    // Set default quality if not already set
+                    if (!fileObj.quality) {
+                        fileObj.quality = DEFAULT_QUALITY;
+                    }
                     
                     // Create image
                     const img = new Image();
@@ -770,7 +833,21 @@
             addMoreBtn.addEventListener('click', function() {
                 fileInput.click();
             });
+            qualityBtn.addEventListener('click', showQualityDialog);
             clearBtn.addEventListener('click', clearAllFiles);
+            
+            // Quality dialog
+            qualitySlider.addEventListener('input', function() {
+                qualityNumber.value = this.value;
+            });
+            
+            qualityNumber.addEventListener('input', function() {
+                qualitySlider.value = this.value;
+            });
+            
+            qualityApplyBtn.addEventListener('click', applyQuality);
+            qualityCancelBtn.addEventListener('click', hideQualityDialog);
+            qualityDialogClose.addEventListener('click', hideQualityDialog);
             
             // Initialize
             setupGlobalDragDrop();
@@ -882,46 +959,60 @@
                 document.getElementById('comparison-separator').style.left = '50%';
             }
 
-            // Update comparison image when quality changes
-            function updateComparisonImage() {
-                const quality = document.getElementById('comparison-quality-slider').value;
-                const fileId = comparisonPopup.dataset.fileId;
+            // Adjust quality of selected files
+            function showQualityDialog() {
+                // Use selected files if there are any, otherwise all files
+                const targetFiles = selectedFiles.size > 0 
+                    ? Array.from(selectedFiles).map(id => convertedFiles.find(f => f.id === id)).filter(Boolean)
+                    : convertedFiles;
                 
-                const fileIndex = convertedFiles.findIndex(file => file.id === fileId);
-                if (fileIndex === -1) return;
+                if (targetFiles.length === 0) return;
                 
-                const file = convertedFiles[fileIndex];
+                // Calculate average quality
+                const avgQuality = Math.round(
+                    targetFiles.reduce((sum, file) => sum + (file.quality || DEFAULT_QUALITY), 0) / targetFiles.length
+                );
                 
-                // Create a new image element for conversion
-                const img = new Image();
-                img.onload = function() {
-                    // Create canvas for conversion
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0);
-                    
-                    // Convert to WebP with new quality
-                    const webpDataUrl = canvas.toDataURL('image/webp', quality / 100);
-                    
-                    // Update comparison image
-                    document.getElementById('comparison-after').src = webpDataUrl;
-                    
-                    // Update file info if Apply button is clicked
-                    if (event.type === 'click' && event.target.id === 'comparison-apply-btn') {
-                        convertedFiles[fileIndex].quality = parseInt(quality);
-                        convertedFiles[fileIndex].dataUrl = webpDataUrl;
-                        convertedFiles[fileIndex].convertedSize = Math.round(webpDataUrl.length * 0.75);
+                // Set dialog values
+                qualitySlider.value = avgQuality;
+                qualityNumber.value = avgQuality;
+                
+                // Show dialog
+                qualityDialog.classList.add('active');
+            }
+            
+            // Apply quality settings to files
+            function applyQuality() {
+                const quality = parseInt(qualitySlider.value);
+                
+                // Apply to selected files if there are any, otherwise all files
+                const targetFileIds = selectedFiles.size > 0 
+                    ? Array.from(selectedFiles)
+                    : convertedFiles.map(file => file.id);
+                
+                targetFileIds.forEach(fileId => {
+                    const fileIndex = convertedFiles.findIndex(file => file.id === fileId);
+                    if (fileIndex !== -1) {
+                        const file = convertedFiles[fileIndex];
+                        file.quality = quality;
                         
-                        // Update the preview image
-                        updateFilePreview(fileId, webpDataUrl);
-                        updateFileInfo(fileId);
+                        // Re-convert the image with new quality
+                        const img = new Image();
+                        img.onload = function() {
+                            convertImage(img, file);
+                        };
+                        
+                        // Create a data URL from the original image
+                        img.src = file.originalDataUrl;
                     }
-                };
+                });
                 
-                img.src = file.originalDataUrl;
+                hideQualityDialog();
+            }
+            
+            // Hide quality dialog
+            function hideQualityDialog() {
+                qualityDialog.classList.remove('active');
             }
         });
 
