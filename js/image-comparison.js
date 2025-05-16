@@ -236,7 +236,7 @@ window.ImageComparison = (function() {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'%3E%3C/line%3E%3Cpolyline points='12 5 19 12 12 19'%3E%3C/polyline%3E%3Cpolyline points='12 5 5 12 12 19'%3E%3C/polyline%3E%3C/svg%3E");
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M5 12H19M5 12L9 8M5 12L9 16M19 12L15 8M19 12L15 16' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
                     background-repeat: no-repeat;
                     background-position: center;
                     transition: transform 0.1s ease, box-shadow 0.1s ease;

@@ -206,11 +206,10 @@ body {
     position: absolute;
     top: 16px;
     right: 16px;
-    background-color: var(--color-success);
+    background-color: var(--color-primary);
     color: var(--color-background);
     padding: 2px 8px;
     font-size: 12px;
-    border-radius: 4px;
 }
 
 .similar-tool[locked] {
@@ -725,9 +724,9 @@ body {
     pointer-events: none;
 }
 
-.sidebar-tool[new]::before {
+.sidebar-tool[new]::after {
     content: 'New';
-    background-color: var(--color-success);
+    background-color: var(--color-primary);
     color: var(--color-background);
     padding: 2px 8px;
     font-size: 12px;
