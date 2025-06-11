@@ -1,32 +1,84 @@
-# dependencies
-/node_modules
+# ============================
+# Backend: ASP.NET / C# / .NET
+# ============================
 
-# production build
-/build
-
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env
-
-# testing
-/coverage
-
-# IDEs and editors
-.vscode/
-.idea/
+## Ignore Visual Studio temporary files, build results, and user-specific files
+.vs/
+*.user
 *.suo
-*.ntvs*
-*.njsproj
-*.sln
+*.userosscache
+*.sln.docstates
 
-# logs
+## Build results
+bin/
+obj/
+out/
+
+## NuGet Packages
+*.nupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+## Azure Web App publish settings
+PublishProfiles/
+
+## Rider IDE
+.idea/
+
+# ============================
+# Frontend: React / Node.js
+# ============================
+
+# Node modules
+**/node_modules/
+
+# Build output
+**/build/
+**/dist/
+
+# Dependency directory for Yarn Plug'n'Play
+.pnp/
+.pnp.js
+
+# Log files
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# OS files
+# IDEs and editors
+.vscode/
+*.code-workspace
+*.swp
+*.bak
+
+# Testing
+coverage/
+*.lcov
+
+# Environment variables
+.env
+.env.*
+
+# Misc
+.DS_Store
 Thumbs.db
+
+# ============================
+# Global ignores (Windows/macOS)
+# ============================
+
+# Windows
+Desktop.ini
+ehthumbs.db
+Thumbs.db
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
